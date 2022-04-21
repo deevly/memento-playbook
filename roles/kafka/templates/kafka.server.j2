@@ -1,0 +1,14 @@
+[Unit]
+Description=Kafka Daemon
+After=zookeeper.service
+
+[Service]
+Environment=KAFKA_HEAP_OPTS=-Xms400m -Xmx400m
+User={{ kafka_user }}
+Group={{ kafka_group }}
+LimitNOFILE={{ kafka_nofiles_limit }}
+Restart=on-failure
+ExecStart=/home/kafka/bin/kafka-server-start.sh /home/kafka/config/server.properties
+
+[Install]
+WantedBy=multi-user.target

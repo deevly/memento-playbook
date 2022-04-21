@@ -1,0 +1,13 @@
+---
+- name: create kafka group
+  ansible.builtin.group:
+    name: '{{ kafka_group }}'
+    state: present
+    system: yes
+
+- name: create kafka user
+  ansible.builtin.user:
+    name: '{{ kafka_user }}'
+    group: '{{ kafka_group }}'
+    state: present
+    system: yes

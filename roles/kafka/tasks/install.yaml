@@ -1,0 +1,66 @@
+---
+- name: ensure kafka
+  block:
+    - name: ensure kafka downalod directory
+      ansible.builtin.file:
+        path: /home/kafka/downloads
+        state: directory
+        mode: 0755
+
+    - name: download kafka
+      ansible.builtin.get_url:
+        url: 'https://dlcdn.apache.org/{{ kafka_version }}/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        dest: /home/kafka/downloads
+      
+    - name: unarchive kafka archive
+      ansible.builtin.unarchive:
+        src: '/home/kafka/downloads/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        dest: '/home/kafka/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+    
+    - name: create symlink
+      ansible.builtin.file:
+        src: '/home/kafka/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        dest: /home/kafka/
+        state: link
+        group: '{{ kafka_group }}'
+        owner: '{{ kafka_user }}'
+
+    - name: create kafka data log dir
+      file:
+        path: '/home/kafka/data'
+        state: directory
+        group: '{{ kafka_group }}'
+        owner: '{{ kafka_user }}'
+        mode: 0755
+
+    - name: create kafka application log
+      file:
+        path: '/home/kafka/logs'
+
+    - name: template config to server.properties
+      ansible.builtin.template:
+        src: server.properties.j2
+        dest: '/home/kafka/config/server.properties'
+        group: '{{ kafka_group }}'
+        owner: '{{ kafka_user }}'
+        mode: 0644
+    
+    - name: template kafka.service
+      ansible.builtin.template:
+        src: kafka.service.j2
+        dest: /usr/lib/systemd/system/kafka.service
+        mode: 0644
+      notify:
+        - restart kafka deamon
+        
+    - name: start kafka daemon
+      ansible.builtin.service:
+        name: kafka
+        state: started
+        enabled: true
+    - name: apach
+      
+    # TODO: 
+    # 1. Zookeeper setting
+    # 2. Inject private/public ip
+    # 3. JAAS config

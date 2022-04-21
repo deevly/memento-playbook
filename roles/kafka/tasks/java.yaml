@@ -1,0 +1,11 @@
+---
+- name: Check java version
+  ansible.builtin.shell: command -v java
+  register: current_java_version
+  ignore_errors: true
+  changed_when: false
+
+- name: Install java
+  ansible.builtin.yum: name="{{ java_version }}" state=present
+  become: true
+  when: not current_java_version
