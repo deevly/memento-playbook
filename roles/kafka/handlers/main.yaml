@@ -4,3 +4,9 @@
     name: kafka
     state: restarted
     daemon_reload: true
+
+- name: restart zookeeper deamon
+  ansible.builtin.systemd:
+    name: zookeeper
+    state: restarted
+    daemon_reload: true

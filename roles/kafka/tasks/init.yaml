@@ -11,3 +11,27 @@
     group: '{{ kafka_group }}'
     state: present
     system: yes
+
+- name: create kafka data log dir
+  file:
+    path: '/home/{{ kafka_user }}/data/kafka'
+    state: directory
+    group: '{{ kafka_group }}'
+    owner: '{{ kafka_user }}'
+    mode: 0755
+
+- name: create kafka application log dir
+  file:
+    path: '/home/{{ kafka_user }}/logs/kafka'
+    state: directory
+    group: '{{ kafka_group }}'
+    owner: '{{ kafka_user }}'
+    mode: 0755
+
+- name: create zookeeper log dir
+  file:
+    path: /home/{{ kafka_user }}/data/zookeeper
+    state: directory
+    group: '{{ kafka_group }}'
+    owner: '{{ kafka_user }}'
+    mode: 0755

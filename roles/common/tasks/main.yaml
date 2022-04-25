@@ -1,0 +1,9 @@
+---
+- name: get public ip
+  ansible.builtin.shell: curl http://checkip.amazonaws.com
+  register: public_ip
+
+- name: set facts
+  ansible.builtin.set_fact:
+    ec2_public_ip: "{{ public_ip.stdout }}"
+    kafka_broker_id: "{{ groups['all'].index(inventory_hostname) }}"

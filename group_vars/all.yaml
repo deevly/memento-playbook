@@ -9,5 +9,4 @@ kafka_scala_version: 2.13
 kafka_version: 3.1.0
 kafka_nofiles_limit: 50000
 kafka_port: 9092
-  
-zookeeper_port: 2021
+zookeeper_port: 2181

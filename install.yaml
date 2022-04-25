@@ -1,0 +1,11 @@
+---
+- hosts: ec2-public
+  become: true
+  serial: 1
+  roles:
+    - roles/common
+      
+- hosts: ec2-public
+  become: true
+  roles:
+    - roles/kafka

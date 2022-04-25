@@ -1,0 +1,86 @@
+---
+- name: init
+  include: init.yaml
+
+- name: install java
+  include: java.yaml
+
+- name: ensure kafka
+  block:
+    - name: ensure kafka downalod directory
+      ansible.builtin.file:
+        path: /home/kafka/downloads
+        state: directory
+        mode: 0755
+
+    - name: download kafka
+      ansible.builtin.get_url:
+        url: 'https://dlcdn.apache.org/{{ kafka_version }}/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        dest: /home/kafka/downloads
+      
+    - name: unarchive kafka archive
+      ansible.builtin.unarchive:
+        src: '/home/kafka/downloads/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        dest: '/home/kafka/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+    
+    - name: create symlink
+      ansible.builtin.file:
+        src: '/home/kafka/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        dest: /home/kafka/
+        state: link
+        group: '{{ kafka_group }}'
+        owner: '{{ kafka_user }}'
+
+- name: template config
+  block:
+  - name: template zookeeper config
+    ansible.builtin.template:
+      src: zookeeper.properties.j2
+      dest: '/home/kafka/config/zookeeper.properties'
+      group: '{{ kafka_group }}'
+      owner: '{{ kafka_user }}'
+      mode: 0644
+
+  - name: template kafka config
+    ansible.builtin.template:
+      src: server.properties.j2
+      dest: '/home/kafka/config/server.properties'
+      group: '{{ kafka_group }}'
+      owner: '{{ kafka_user }}'
+      mode: 0644
+
+- name: template service
+  block:
+  - name: template zookeeper.service
+    ansible.builtin.template:
+      src: zookeeper.service.j2
+      dest: /usr/lib/systemd/system/zookeeper.service
+      mode: 0644
+    notify:
+      - restart zookeeper deamon
+    
+  - name: template kafka.service
+    ansible.builtin.template:
+      src: kafka.service.j2
+      dest: /usr/lib/systemd/system/kafka.service
+      mode: 0644
+    notify:
+      - restart kafka deamon
+
+- name: start daemon
+  block:
+  - name: start zookeeper daemon
+    ansible.builtin.service:
+      name: kafka
+      state: started
+      enabled: true
+
+  - name: start kafka daemon
+    ansible.builtin.service:
+      name: kafka
+      state: started
+      enabled: true
+
+  
+    # TODO: 
+    # 2. JAAS config

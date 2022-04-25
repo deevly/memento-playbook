@@ -1,0 +1,12 @@
+[Unit]
+Description=Zookeeper Daemon
+
+[Service]
+Environment=KAFKA_HEAP_OPTS=-Xms400m -Xmx400m
+User={{ kafka_user }}
+Group={{ kafka_group }}
+Restart=on-failure
+ExecStart=/home/kafka/bin/zookeeper-server-start.sh /home/kafka/config/zookeeper.properties
+
+[Install]
+WantedBy=multi-user.target

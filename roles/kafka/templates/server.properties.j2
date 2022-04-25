@@ -18,7 +18,7 @@
 ############################# Server Basics #############################
 
 # The id of the broker. This must be set to a unique integer for each broker.
-broker.id=$KAFKA_BROKER_ID
+broker.id={{ kafka_broker_id }}
 
 ############################# Socket Server Settings #############################
 
@@ -33,9 +33,9 @@ broker.id=$KAFKA_BROKER_ID
 # it uses the value for "listeners" if configured.  Otherwise, it will use the value
 # returned from java.net.InetAddress.getCanonicalHostName().
 
-listeners=SASL_PLAINTEXT://$HOSTNAME:9092
+listeners=SASL_PLAINTEXT://{{ ansible_default_ipv4.address }}:9092
 security.inter.broker.protocol=SASL_PLAINTEXT
-advertised.listeners=SASL_PLAINTEXT://$PUBLIC_IP:9092
+advertised.listeners=SASL_PLAINTEXT://{{ ec2_public_ip }}:9092
 sasl.enabled.mechanisms=PLAIN
 sasl.mechanism.inter.broker.protocol=PLAIN
 authorizer.class.name=kafka.security.authorizer.AclAuthorizer
@@ -63,7 +63,7 @@ socket.request.max.bytes=104857600
 ############################# Log Basics #############################
 
 # A comma separated list of directories under which to store log files
-log.dirs=/home/ec2-user/kafka_2.13-3.1.0/data/kafka
+log.dirs=/home/{{ kafka_user }}/logs/kafka
 
 # The default number of log partitions per topic. More partitions allow greater
 # parallelism for consumption, but this will also result in more files across
@@ -126,7 +126,7 @@ log.retention.check.interval.ms=300000
 # server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
 # You can also append an optional chroot string to the urls to specify the
 # root directory for all kafka znodes.
-zookeeper.connect=$ZOOKEEPER_CONNECTION_STRING
+zookeeper.connect={% for public_ip in groups['ec2-public'] %}{{ hostvars[public_ip]['ansible_default_ipv4']['address'] }}:{{ zookeeper_port }}{% if not loop.last %},{% endif %}{% endfor %}
 # Timeout in ms for connecting to zookeeper
 zookeeper.connection.timeout.ms=18000
 
