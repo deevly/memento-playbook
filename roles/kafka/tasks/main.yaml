@@ -15,28 +15,27 @@
 
     - name: download kafka
       ansible.builtin.get_url:
-        url: 'https://dlcdn.apache.org/{{ kafka_version }}/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
+        url: 'https://dlcdn.apache.org/kafka/{{ kafka_version }}/kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz'
         dest: /home/kafka/downloads
       
     - name: unarchive kafka archive
       ansible.builtin.unarchive:
-        src: '/home/kafka/downloads/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
-        dest: '/home/kafka/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
-    
+        src: '/home/kafka/downloads/kafka_{{ kafka_scala_version }}-{{ kafka_version }}.tgz'
+        dest: '/home/kafka'
+        remote_src: true
     - name: create symlink
       ansible.builtin.file:
-        src: '/home/kafka/kafka_{{ kafka_scala_version }}_{{ kafka_version }}.tgz'
-        dest: /home/kafka/
+        src: '/home/kafka/kafka_{{ kafka_scala_version }}-{{ kafka_version }}'
+        dest: /home/kafka/kafka
         state: link
         group: '{{ kafka_group }}'
         owner: '{{ kafka_user }}'
-
 - name: template config
   block:
   - name: template zookeeper config
     ansible.builtin.template:
       src: zookeeper.properties.j2
-      dest: '/home/kafka/config/zookeeper.properties'
+      dest: '/home/kafka/kafka/config/zookeeper.properties'
       group: '{{ kafka_group }}'
       owner: '{{ kafka_user }}'
       mode: 0644
@@ -44,7 +43,7 @@
   - name: template kafka config
     ansible.builtin.template:
       src: server.properties.j2
-      dest: '/home/kafka/config/server.properties'
+      dest: '/home/kafka/kafka/config/server.properties'
       group: '{{ kafka_group }}'
       owner: '{{ kafka_user }}'
       mode: 0644
@@ -55,6 +54,8 @@
     ansible.builtin.template:
       src: zookeeper.service.j2
       dest: /usr/lib/systemd/system/zookeeper.service
+      group: '{{ kafka_group }}'
+      owner: '{{ kafka_user }}'
       mode: 0644
     notify:
       - restart zookeeper deamon
@@ -63,6 +64,8 @@
     ansible.builtin.template:
       src: kafka.service.j2
       dest: /usr/lib/systemd/system/kafka.service
+      group: '{{ kafka_group }}'
+      owner: '{{ kafka_user }}'
       mode: 0644
     notify:
       - restart kafka deamon

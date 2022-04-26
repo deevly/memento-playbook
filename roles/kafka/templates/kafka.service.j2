@@ -8,7 +8,8 @@ User={{ kafka_user }}
 Group={{ kafka_group }}
 LimitNOFILE={{ kafka_nofiles_limit }}
 Restart=on-failure
-ExecStart=/home/kafka/bin/kafka-server-start.sh /home/kafka/config/server.properties
+ExecStart=/home/kafka/kafka/bin/kafka-server-start.sh /home/kafka/kafka/config/server.properties
+ExecStop=/home/kafka/kafka/bin/kafka-server-stop.sh
 
 [Install]
 WantedBy=multi-user.target

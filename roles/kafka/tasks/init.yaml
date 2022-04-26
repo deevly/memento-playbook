@@ -35,3 +35,11 @@
     group: '{{ kafka_group }}'
     owner: '{{ kafka_user }}'
     mode: 0755
+
+- name: create zookeeper myid
+  ansible.builtin.template:
+    src: myid.j2
+    dest: /home/{{ kafka_user }}/data/zookeeper/myid
+    group: '{{ kafka_group }}'
+    owner: '{{ kafka_user }}'
+    mode: 0755
