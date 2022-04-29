@@ -1,0 +1,5 @@
+Server {
+        org.apache.zookeeper.server.auth.DigestLoginModule required
+        user_{{ zookeeper_admin_username | kms_decrypt(kms_key) }}="{{ zookeeper_admin_password | kms_decrypt(kms_key) }}"
+        user_{{ kafka_admin_username | kms_decrypt(kms_key) }}="{{ kafka_admin_password | kms_decrypt(kms_key) }}";
+};

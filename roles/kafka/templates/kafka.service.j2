@@ -4,6 +4,7 @@ After=zookeeper.service
 
 [Service]
 Environment=KAFKA_HEAP_OPTS=-Xms400m -Xmx400m
+Environment=KAFKA_OPTS=-Djava.security.auth.login.config=/home/kafka/kafka/config/jaas/kafka_server_jaas.conf
 User={{ kafka_user }}
 Group={{ kafka_group }}
 LimitNOFILE={{ kafka_nofiles_limit }}

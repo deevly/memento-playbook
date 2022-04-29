@@ -1,0 +1,7 @@
+---
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: print encrypted value
+      ansible.builtin.debug:
+        msg: "{{ target | kms_encrypt(kms_key) }}"

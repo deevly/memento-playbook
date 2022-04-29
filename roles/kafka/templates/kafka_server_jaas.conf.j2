@@ -1,0 +1,13 @@
+KafkaServer {
+        org.apache.kafka.common.security.plain.PlainLoginModule required
+        username="{{ kafka_admin_username | kms_decrypt(kms_key)}}"
+        password="{{ kafka_admin_password | kms_decrypt(kms_key)}}"
+        user_{{ kafka_admin_username | kms_decrypt(kms_key) }}="{{ kafka_admin_password | kms_decrypt(kms_key)}}"
+        user_{{ kafka_user_username | kms_decrypt(kms_key) }}="{{ kafka_user_password | kms_decrypt(kms_key)}}";
+};
+
+Client {
+    org.apache.zookeeper.server.auth.DigestLoginModule required
+    username="{{ kafka_admin_username | kms_decrypt(kms_key) }}"
+    password="{{ kafka_admin_password | kms_decrypt(kms_key) }}";
+};
