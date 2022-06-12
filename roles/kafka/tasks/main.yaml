@@ -54,7 +54,7 @@
         group: '{{ kafka_group }}'
         owner: '{{ kafka_user }}'
         mode: 0644
-
+  
 - name: template config
   block:
   - name: template zookeeper config
@@ -64,6 +64,9 @@
       group: '{{ kafka_group }}'
       owner: '{{ kafka_user }}'
       mode: 0644
+    notify:
+      - reload systemd configuration
+      - restart zookeeper deamon
 
   - name: template kafka config
     ansible.builtin.template:
@@ -72,6 +75,9 @@
       group: '{{ kafka_group }}'
       owner: '{{ kafka_user }}'
       mode: 0644
+    notify:
+      - reload systemd configuration
+      - restart zookeeper deamon
 
 - name: template service
   block:
@@ -83,6 +89,7 @@
       owner: '{{ kafka_user }}'
       mode: 0644
     notify:
+      - reload systemd configuration
       - restart zookeeper deamon
     
   - name: template kafka.service
@@ -93,6 +100,7 @@
       owner: '{{ kafka_user }}'
       mode: 0644
     notify:
+      - reload systemd configuration
       - restart kafka deamon
 
 # https://knight76.tistory.com/entry/kafka-kafkacommonInconsistentBrokerIdException-Configured-brokerid-2-doesnt-match-stored-brokerid-0-in-metaproperties-%ED%95%B4%EA%B2%B0-%ED%95%98%EA%B8%B0
