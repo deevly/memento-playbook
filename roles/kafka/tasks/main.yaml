@@ -77,7 +77,7 @@
       mode: 0644
     notify:
       - reload systemd configuration
-      - restart zookeeper deamon
+      - restart kafka deamon
 
 - name: template service
   block:
